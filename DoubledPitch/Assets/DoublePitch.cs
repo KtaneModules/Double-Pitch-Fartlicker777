@@ -88,9 +88,8 @@ public class DoublePitch : MonoBehaviour {
       UnencryptedAnswerResponse = Responses[WordSelector];
       Debug.LogFormat("[Double Pitch #{0}] The unscrambled call is {1}.", moduleId, GivenCall);
       Debug.LogFormat("[Double Pitch #{0}] The unencrypted response is {1}.", moduleId, UnencryptedAnswerResponse);
-      for (int i = 0; i < UnencryptedAnswerResponse.Length; i++) {
+      for (int i = 0; i < UnencryptedAnswerResponse.Length; i++)
         EncryptedAnswer += Alphabet[(Alphabet.IndexOf(UnencryptedAnswerResponse[i]) + Bomb.GetSerialNumberNumbers().Last()) % 26].ToString();
-      }
       Debug.LogFormat("[Double Pitch #{0}] The response caesar ciphered is {1}.", moduleId, EncryptedAnswer);
       for (int i = 0; i < EncryptedAnswer.Length; i++) {
         NumericalAnswer *= 10;
@@ -131,9 +130,8 @@ public class DoublePitch : MonoBehaviour {
           ShuffledCall[i] = GivenCall[i];
       }
       ShuffledCall.Shuffle();
-      for (int i = 0; i < ShuffledCall.Length; i++) {
+      for (int i = 0; i < ShuffledCall.Length; i++)
         ShuffledCallButAsAString += ShuffledCall[i].ToString();
-      }
       Debug.LogFormat("[Double Pitch #{0}] The scrambled call is {1}.", moduleId, ShuffledCallButAsAString);
       Debug.LogFormat("[Double Pitch #{0}] The answer number is {1}.", moduleId, NumericalAnswer);
       IndexForLettersListening = UnityEngine.Random.Range(0, 10);
@@ -149,26 +147,7 @@ public class DoublePitch : MonoBehaviour {
             Answer *= 10;
             Answer += i;
           }
-          switch (Answer.ToString().Length) {
-            case 0:
-            CurrentInput.text = "00000";
-            break;
-            case 1:
-            CurrentInput.text = "0000" + Answer.ToString();
-            break;
-            case 2:
-            CurrentInput.text = "000" + Answer.ToString();
-            break;
-            case 3:
-            CurrentInput.text = "00" + Answer.ToString();
-            break;
-            case 4:
-            CurrentInput.text = "0" + Answer.ToString();
-            break;
-            case 5:
-            CurrentInput.text = Answer.ToString();
-            break;
-          }
+          CurrentInput.text = Answer.ToString("00000");
         }
         else if (Key == Keypad[i] && i == 10) {
           StartCoroutine(keyAnimation(i));
@@ -190,9 +169,8 @@ public class DoublePitch : MonoBehaviour {
             CurrentInput.text = "ERROR";
           }
           funni:
-          if (Answer == NumericalAnswer) {
+          if (Answer == NumericalAnswer)
             GetComponent<KMBombModule>().HandlePass();
-          }
         }
       }
     }
@@ -234,15 +212,13 @@ public class DoublePitch : MonoBehaviour {
       while (Activated) {
         for (int i = 0; i < 5; i++) {
           if (BinaryRepresentations[Alphabet.IndexOf(ShuffledCall[IndexForLettersListening])][i]) {
-            if (!Activated) {
+            if (!Activated)
               goto NotActivatedLol;
-            }
             Audio.PlaySoundAtTransform("High", transform);
           }
           else {
-            if (!Activated) {
+            if (!Activated)
               goto NotActivatedLol;
-            }
             Audio.PlaySoundAtTransform("Low", transform);
           }
           yield return new WaitForSecondsRealtime(.287f);
@@ -316,7 +292,7 @@ public class DoublePitch : MonoBehaviour {
       yield return null;
       if (Command == "TOGGLE")
         SoundStarter.OnInteract();
-      else if (Command == "RAISE")
+      else if (Command == "LOWER")
         PitchSelector[1].OnInteract();
       else if (Command == "RAISE")
         PitchSelector[0].OnInteract();
@@ -327,10 +303,8 @@ public class DoublePitch : MonoBehaviour {
         }
         Keypad[11].OnInteract();
       }
-      else {
-        yield return null;
+      else
         yield return "sendtochaterror I don't understand!";
-      }
     }
 
     IEnumerator TwitchHandleForcedSolve () {
