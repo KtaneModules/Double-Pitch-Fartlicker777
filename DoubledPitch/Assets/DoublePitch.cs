@@ -164,6 +164,14 @@ public class DoublePitch : MonoBehaviour {
             Audio.PlaySoundAtTransform("tits", transform);
             goto funni;
           }
+          else if (Answer == 42069) {
+            Audio.PlaySoundAtTransform("loudMan", transform);
+            goto funni;
+          }
+          else if (Answer == 58008) {
+            Audio.PlaySoundAtTransform("fart", transform);
+            goto funni;
+          }
           if (Answer != NumericalAnswer) {
             GetComponent<KMBombModule>().HandleStrike();
             CurrentInput.text = "ERROR";
