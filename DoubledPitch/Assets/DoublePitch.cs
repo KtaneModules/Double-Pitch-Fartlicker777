@@ -265,7 +265,7 @@ public class DoublePitch : MonoBehaviour {
             yield return new WaitForSeconds(0.005F);
         }
         for (int i = 0; i < 5; i++)
-        {
+        { 
             PitchSelector[HiKavin].transform.localPosition += new Vector3(0, +0.15F, 0);
             yield return new WaitForSeconds(0.005F);
         }
