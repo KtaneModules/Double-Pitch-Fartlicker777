@@ -164,6 +164,14 @@ public class DoublePitch : MonoBehaviour {
             Audio.PlaySoundAtTransform("tits", transform);
             goto funni;
           }
+          else if (Answer == 42069) {
+            Audio.PlaySoundAtTransform("loudMan", transform);
+            goto funni;
+          }
+          else if (Answer == 58008) {
+            Audio.PlaySoundAtTransform("fart", transform);
+            goto funni;
+          }
           if (Answer != NumericalAnswer) {
             GetComponent<KMBombModule>().HandleStrike();
             CurrentInput.text = "ERROR";
@@ -257,7 +265,7 @@ public class DoublePitch : MonoBehaviour {
             yield return new WaitForSeconds(0.005F);
         }
         for (int i = 0; i < 5; i++)
-        {
+        { 
             PitchSelector[HiKavin].transform.localPosition += new Vector3(0, +0.15F, 0);
             yield return new WaitForSeconds(0.005F);
         }
