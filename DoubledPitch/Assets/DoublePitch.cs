@@ -10,81 +10,67 @@ public class DoublePitch : MonoBehaviour {
 
     public KMBombInfo Bomb;
     public KMAudio Audio;
+
     public KMSelectable[] Keypad;
     public KMSelectable[] PitchSelector;
     public KMSelectable SoundStarter;
-    public TextMesh CurrentPitchLevel;
-    public TextMesh CurrentInput;
+
+    public GameObject[] LEDSegments;
     public GameObject ConenctsTheSoundButtonAndBox;
+
     public Material[] Color;
+    public Material[] ColorLED;
 
     static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
 
-    int WordSelector;
-    int CaesarShift;
-    int NumericalAnswer;
+    int[] ErrorLED = {7, 8, 10, 11, 13, 17, 18, 24, 25, 31, 32, 33, 34, 38, 39};
+    int[] GreatLED = {7, 8, 11, 12, 13, 17, 18, 21, 22, 24, 25, 27, 28, 29, 30, 31, 32, 33, 36, 38, 39, 41};
     int Answer;
+    int CaesarShift;
     int IndexForLettersListening;
+    int NumericalAnswer;
+    int Presses;
+    int WordSelector;
 
     string[] Calls = {"GAMEOVER", "DYNAMITE", "BINARIES", "DOUBLEOH", "UNEMPLOY", "HALFLIFE", "PREPARED", "DEBUGLOG", "BARACUDA", "HANGTHEM", "LIGHTSPD", "THISMODS", "TROPICAL", "XENOLITH", "KNOCKOUT", "DETONATE", "ENCOUNTR", "YOURMAMA", "CHEKMATE", "BLANANAS", "THEWTNES", "TETRAVEX", "FUNNYMAN", "NTICHMBR", "KEEPTALK", "SOLOTHIS", "WEREDEAD", "GREATJOB", "ZULUKILO", "RADIATOR", "MRPEANUT", "ALCOHOLS", "ROYLFLSH", "JAPANESE", "URZODIAC", "TIMERSUP"};
     string[] Responses = {"LOSER", "IMTNT", "PITCH", "ZEROO", "GTJOB", "THREE", "READY", "ERROR", "SNAKE", "MAFIA", "BLAST", "BUGGD", "FRUIT", "ALIEN", "PUNCH", "BOMBS", "KANYE", "FATTY", "CHESS", "UHHHH", "DREAM", "MOVED", "TROLL", "GUNNR", "BUSTR", "IWILL", "LMFAO", "FUTWO", "QUERY", "CHILL", "TIRCH", "DRINK", "POKER", "KANJI", "ARIES", "XPLDE"};
     string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    string EncryptedAnswer = "";
     string GivenCall = "";
     string ShuffledCallButAsAString = "";
     string UnencryptedAnswerResponse = "";
-    string EncryptedAnswer = "";
+    string Temp;
 
+    bool[][] LEDs = new bool[6][] {
+      new bool[7], new bool[7], new bool[7], new bool[7], new bool[7], new bool[7]
+    };
     bool[][] BinaryRepresentations = new bool[26][] {
-      new bool[5] {false, false, false, false, true},
-      new bool[5] {false, false, false, true, false},
-      new bool[5] {false, false, false, true, true},
-      new bool[5] {false, false, true, false, false},
-      new bool[5] {false, false, true, false, true},
-      new bool[5] {false, false, true, true, false},
-      new bool[5] {false, false, true, true, true},
-      new bool[5] {false, true, false, false, false},
-      new bool[5] {false, true, false, false, true},
-      new bool[5] {false, true, false, true, false},
-      new bool[5] {false, true, false, true, true},
-      new bool[5] {false, true, true, false, false},
-      new bool[5] {false, true, true, false, true},
-      new bool[5] {false, true, true, true, false},
-      new bool[5] {false, true, true, true, true},
-      new bool[5] {true, false, false, false, false},
-      new bool[5] {true, false, false, false, true},
-      new bool[5] {true, false, false, true, false},
-      new bool[5] {true, false, false, true, true},
-      new bool[5] {true, false, true, false, false},
-      new bool[5] {true, false, true, false, true},
-      new bool[5] {true, false, true, true, false},
-      new bool[5] {true, false, true, true, true},
-      new bool[5] {true, true, false, false, false},
-      new bool[5] {true, true, false, false, true},
-      new bool[5] {true, true, false, true, false}
+      new bool[5] {false, false, false, false, true}, new bool[5] {false, false, false, true, false}, new bool[5] {false, false, false, true, true}, new bool[5] {false, false, true, false, false}, new bool[5] {false, false, true, false, true}, new bool[5] {false, false, true, true, false}, new bool[5] {false, false, true, true, true}, new bool[5] {false, true, false, false, false}, new bool[5] {false, true, false, false, true}, new bool[5] {false, true, false, true, false}, new bool[5] {false, true, false, true, true}, new bool[5] {false, true, true, false, false}, new bool[5] {false, true, true, false, true}, new bool[5] {false, true, true, true, false}, new bool[5] {false, true, true, true, true}, new bool[5] {true, false, false, false, false}, new bool[5] {true, false, false, false, true}, new bool[5] {true, false, false, true, false}, new bool[5] {true, false, false, true, true}, new bool[5] {true, false, true, false, false}, new bool[5] {true, false, true, false, true}, new bool[5] {true, false, true, true, false}, new bool[5] {true, false, true, true, true}, new bool[5] {true, true, false, false, false}, new bool[5] {true, true, false, false, true}, new bool[5] {true, true, false, true, false}
     };
     private bool[] animatingFlag = new bool[12];
     private bool[] animatingFlagTwo = new bool[2];
-    bool animatingFlagThree = false;
-    bool Activated = false;
+    bool Activated;
+    bool Animating;
+    bool animatingFlagThree;
 
     char[] ShuffledCall = new char[10];
 
     void Awake () {
         moduleId = moduleIdCounter++;
-        foreach (KMSelectable Key in Keypad) {
+        foreach (KMSelectable Key in Keypad)
             Key.OnInteract += delegate () { KeyPress(Key); return false; };
-        }
-        foreach (KMSelectable Arrow in PitchSelector) {
+        foreach (KMSelectable Arrow in PitchSelector)
             Arrow.OnInteract += delegate () { ArrowPress(Arrow); return false; };
-        }
         SoundStarter.OnInteract += delegate () { SoundStarterPress(); return false; };
     }
 
     void Start () {
       WordSelector = UnityEngine.Random.Range(0, Calls.Length);
       GivenCall = Calls[WordSelector];
+      for (int i = 0; i < LEDSegments.Length; i++)
+        LEDSegments[i].gameObject.SetActive(false);
       UnencryptedAnswerResponse = Responses[WordSelector];
       Debug.LogFormat("[Double Pitch #{0}] The unscrambled call is {1}.", moduleId, GivenCall);
       Debug.LogFormat("[Double Pitch #{0}] The unencrypted response is {1}.", moduleId, UnencryptedAnswerResponse);
@@ -94,31 +80,31 @@ public class DoublePitch : MonoBehaviour {
       for (int i = 0; i < EncryptedAnswer.Length; i++) {
         NumericalAnswer *= 10;
         switch (EncryptedAnswer[i]) {
-          case 'A':case 'B':case 'C':
-          NumericalAnswer += 1;
+          case 'A': case 'B': case 'C':
+          NumericalAnswer++;
           break;
-          case 'D':case 'E':case 'F':
+          case 'D': case 'E': case 'F':
           NumericalAnswer += 2;
           break;
-          case 'G':case 'H':case 'I':
+          case 'G': case 'H': case 'I':
           NumericalAnswer += 3;
           break;
-          case 'J':case 'K':case 'L':
+          case 'J': case 'K': case 'L':
           NumericalAnswer += 4;
           break;
-          case 'M':case 'N':case 'O':
+          case 'M': case 'N': case 'O':
           NumericalAnswer += 5;
           break;
-          case 'P':case 'Q':case 'R':
+          case 'P': case 'Q': case 'R':
           NumericalAnswer += 6;
           break;
-          case 'S':case 'T':
+          case 'S': case 'T':
           NumericalAnswer += 7;
           break;
-          case 'U':case 'V':
+          case 'U': case 'V':
           NumericalAnswer += 8;
           break;
-          case 'W':case 'X':
+          case 'W': case 'X':
           NumericalAnswer += 9;
           break;
         }
@@ -133,9 +119,27 @@ public class DoublePitch : MonoBehaviour {
       for (int i = 0; i < ShuffledCall.Length; i++)
         ShuffledCallButAsAString += ShuffledCall[i].ToString();
       Debug.LogFormat("[Double Pitch #{0}] The scrambled call is {1}.", moduleId, ShuffledCallButAsAString);
-      Debug.LogFormat("[Double Pitch #{0}] The answer number is {1}.", moduleId, NumericalAnswer);
+      Debug.LogFormat("[Double Pitch #{0}] The answer number is {1}.", moduleId, NumericalAnswer.ToString("00000"));
       IndexForLettersListening = UnityEngine.Random.Range(0, 10);
-      CurrentPitchLevel.text = IndexForLettersListening.ToString();
+      for (int i = 0; i < 7; i++)
+        LEDSegments[i].gameObject.SetActive(ShowingSegments(IndexForLettersListening)[i]);
+    }
+
+    bool[] ShowingSegments (int Input) {
+      bool[] Output = new bool[7];
+      switch (Input) {    //tm tl    tr     mm     bl    br    bm
+        case 0: Output = new bool[] {true, true, true, false, true, true, true}; break;
+        case 1: Output = new bool[] {false, false, true, false, false, true, false}; break;
+        case 2: Output = new bool[] {true, false, true, true, true, false, true}; break;
+        case 3: Output = new bool[] {true, false, true, true, false, true, true}; break;
+        case 4: Output = new bool[] {false, true, true, true, false, true, false}; break;
+        case 5: Output = new bool[] {true, true, false, true, false, true, true}; break;
+        case 6: Output = new bool[] {true, true, false, true, true, true, true}; break;
+        case 7: Output = new bool[] {true, false, true, false, false, true, false}; break;
+        case 8: Output = new bool[] {true, true, true, true, true, true, true}; break;
+        case 9: Output = new bool[] {true, true, true, true, false, true, true}; break;
+      }
+      return Output;
     }
 
     void KeyPress (KMSelectable Key) {
@@ -143,19 +147,35 @@ public class DoublePitch : MonoBehaviour {
         if (Key == Keypad[i] && i < 10) {
           Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Key.transform);
           StartCoroutine(keyAnimation(i));
+          if (Animating)
+            return;
           if (Answer.ToString().Length != 5) {
             Answer *= 10;
             Answer += i;
           }
-          CurrentInput.text = Answer.ToString("00000");
+          if (Presses == 5)
+            return;
+          Presses++;
+          switch (Presses) {
+            case 1: Temp = Answer.ToString("0"); break; case 2: Temp = Answer.ToString("00"); break; case 3: Temp = Answer.ToString("000"); break; case 4: Temp = Answer.ToString("0000"); break; case 5: Temp = Answer.ToString("00000"); break;
+          }
+          for (int x = 1; x < Temp.Length + 1; x++) {
+            for (int j = 0; j < 7; j++) {
+              LEDSegments[j + (6 - x) * 7].gameObject.SetActive(ShowingSegments(int.Parse(Temp[Temp.Length - x].ToString()))[j]);
+            }
+          }
         }
         else if (Key == Keypad[i] && i == 10) {
           StartCoroutine(keyAnimation(i));
-          CurrentInput.text = "00000";
+          if (Animating)
+            return;
           Answer &= 0;
+          StartCoroutine(ShutOff("Clear"));
         }
         else if (Key == Keypad[i] && i == 11) {
           StartCoroutine(keyAnimation(i));
+          if (Animating)
+            return;
           if (Answer == 69420) {
             Audio.PlaySoundAtTransform("WakaFlaca", transform);
             goto funni;
@@ -172,15 +192,67 @@ public class DoublePitch : MonoBehaviour {
             Audio.PlaySoundAtTransform("fart", transform);
             goto funni;
           }
-          if (Answer != NumericalAnswer) {
+          if (Answer != NumericalAnswer || Presses != 5) {
             GetComponent<KMBombModule>().HandleStrike();
-            CurrentInput.text = "ERROR";
+            StartCoroutine(ShutOff("Strike"));
+            return;
           }
           funni:
-          if (Answer == NumericalAnswer)
+          if (Answer == NumericalAnswer) {
             GetComponent<KMBombModule>().HandlePass();
+            StartCoroutine(ShutOff("Solve"));
+          }
         }
       }
+    }
+
+    IEnumerator ShutOff (string Input) {
+      Animating = true;
+      switch (Input) {
+        case "Strike":
+        for (int i = 7; i < 42; i++) {
+          LEDSegments[i].GetComponent<MeshRenderer>().material = ColorLED[1];
+        }
+        for (int x = 0; x < 10; x++) {
+          for (int j = 7; j < LEDSegments.Length; j++)
+            if (LEDSegments[j].gameObject.activeSelf)
+              LEDSegments[j].gameObject.SetActive(false);
+          yield return new WaitForSecondsRealtime(.2f);
+          for (int i = 0; i < ErrorLED.Length; i++)
+            LEDSegments[ErrorLED[i]].gameObject.SetActive(true);
+          yield return new WaitForSecondsRealtime(.2f);
+        }
+        for (int i = 7; i < 42; i++)
+          LEDSegments[i].GetComponent<MeshRenderer>().material = ColorLED[0];
+        goto case "Clear";
+        break;
+        case "Clear":
+        for (int j = 7; j < LEDSegments.Length; j++) {
+          if (LEDSegments[j].gameObject.activeSelf) {
+            LEDSegments[j].gameObject.SetActive(false);
+            yield return new WaitForSecondsRealtime(.05f);
+          }
+        }
+        Temp = "";
+        Answer = 0;
+        break;
+        case "Solve":
+        for (int i = 7; i < 42; i++) {
+          LEDSegments[i].GetComponent<MeshRenderer>().material = ColorLED[2];
+        }
+        for (int x = 0; x < 10; x++) {
+          for (int j = 7; j < LEDSegments.Length; j++)
+            if (LEDSegments[j].gameObject.activeSelf)
+              LEDSegments[j].gameObject.SetActive(false);
+          yield return new WaitForSecondsRealtime(.2f);
+          for (int i = 0; i < GreatLED.Length; i++)
+            LEDSegments[GreatLED[i]].gameObject.SetActive(true);
+          yield return new WaitForSecondsRealtime(.2f);
+        }
+        break;
+      }
+      Animating = false;
+      Presses = 0;
     }
 
     void ArrowPress (KMSelectable Arrow) {
@@ -189,7 +261,6 @@ public class DoublePitch : MonoBehaviour {
         StartCoroutine(keyAnimationForDifferentButtons(0));
         IndexForLettersListening++;
         IndexForLettersListening %= 10;
-        CurrentPitchLevel.text = IndexForLettersListening.ToString();
       }
       else {
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
@@ -197,8 +268,9 @@ public class DoublePitch : MonoBehaviour {
         IndexForLettersListening--;
         if (IndexForLettersListening < 0)
           IndexForLettersListening += 10;
-        CurrentPitchLevel.text = IndexForLettersListening.ToString();
       }
+      for (int i = 0; i < 7; i++)
+        LEDSegments[i].gameObject.SetActive(ShowingSegments(IndexForLettersListening)[i]);
     }
 
     void SoundStarterPress () {
@@ -236,7 +308,7 @@ public class DoublePitch : MonoBehaviour {
       yield return null;
     }
 
-    private IEnumerator keyAnimation(int HiKavin)
+    private IEnumerator keyAnimation (int HiKavin)
     {
         animatingFlag[HiKavin] = true;
         Keypad[HiKavin].AddInteractionPunch(0.125f);
@@ -254,7 +326,7 @@ public class DoublePitch : MonoBehaviour {
         animatingFlag[HiKavin] = false;
     }
 
-    private IEnumerator keyAnimationForDifferentButtons(int HiKavin)
+    private IEnumerator keyAnimationForDifferentButtons (int HiKavin)
     {
         animatingFlagTwo[HiKavin] = true;
         PitchSelector[HiKavin].AddInteractionPunch(0.125f);
@@ -265,14 +337,14 @@ public class DoublePitch : MonoBehaviour {
             yield return new WaitForSeconds(0.005F);
         }
         for (int i = 0; i < 5; i++)
-        { 
+        {
             PitchSelector[HiKavin].transform.localPosition += new Vector3(0, +0.15F, 0);
             yield return new WaitForSeconds(0.005F);
         }
         animatingFlagTwo[HiKavin] = false;
     }
 
-    private IEnumerator keyAnimationForDifferentButtonsButDifferentNow()
+    private IEnumerator keyAnimationForDifferentButtonsButDifferentNow ()
     {
         animatingFlagThree = true;
         SoundStarter.AddInteractionPunch(0.125f);
@@ -317,6 +389,8 @@ public class DoublePitch : MonoBehaviour {
 
     IEnumerator TwitchHandleForcedSolve () {
       Keypad[10].OnInteract();
+      while (Animating)
+        yield return null;
       for (int i = 0; i < 5; i++) {
         Keypad[int.Parse(NumericalAnswer.ToString("00000")[i].ToString())].OnInteract();
         yield return new WaitForSeconds(.1f);

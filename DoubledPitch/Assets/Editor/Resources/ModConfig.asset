@@ -14,11 +14,10 @@ MonoBehaviour:
   id: DoublePitch
   title: Double Pitch
   author: me
-  description: 'Through shoddy electronics work, someone was able to recreate the
-    sound of an IBM 5150.
-
-
-    Manual can be found at ktane.timwi.de'
+  description: "Through shoddy electronics work, someone was able to recreate the
+    sound of an IBM 5150.\n\nManual can be found at ktane.timwi.de\n\nThanks to VFlyer
+    for letting me use his 7-Segment Display from 7, his module can be found at https://steamcommunity.com/sharedfiles/filedetails/?id=1940164898.\n\nIf
+    there are any bugs, contact Fartlicker777#9169\r\n"
   version: 
   outputFolder: build
-  previewImage: {fileID: 2800000, guid: cae92d78ec67770499127ade6feb659c, type: 3}
+  previewImage: {fileID: 2800000, guid: 2098ba23f92fb3e4aaeb2d1e40192a14, type: 3}
