@@ -125,22 +125,7 @@ public class DoublePitch : MonoBehaviour {
         LEDSegments[i].gameObject.SetActive(ShowingSegments(IndexForLettersListening)[i]);
     }
 
-    bool[] ShowingSegments (int Input) {
-      bool[] Output = new bool[7];
-      switch (Input) {    //tm tl    tr     mm     bl    br    bm
-        case 0: Output = new bool[] {true, true, true, false, true, true, true}; break;
-        case 1: Output = new bool[] {false, false, true, false, false, true, false}; break;
-        case 2: Output = new bool[] {true, false, true, true, true, false, true}; break;
-        case 3: Output = new bool[] {true, false, true, true, false, true, true}; break;
-        case 4: Output = new bool[] {false, true, true, true, false, true, false}; break;
-        case 5: Output = new bool[] {true, true, false, true, false, true, true}; break;
-        case 6: Output = new bool[] {true, true, false, true, true, true, true}; break;
-        case 7: Output = new bool[] {true, false, true, false, false, true, false}; break;
-        case 8: Output = new bool[] {true, true, true, true, true, true, true}; break;
-        case 9: Output = new bool[] {true, true, true, true, false, true, true}; break;
-      }
-      return Output;
-    }
+    #region Buttons
 
     void KeyPress (KMSelectable Key) {
       for (int i = 0; i < Keypad.Length; i++) {
@@ -206,6 +191,67 @@ public class DoublePitch : MonoBehaviour {
       }
     }
 
+    void ArrowPress (KMSelectable Arrow) {
+      if (Arrow == PitchSelector[0]) {
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
+        StartCoroutine(keyAnimationForDifferentButtons(0));
+        IndexForLettersListening++;
+        IndexForLettersListening %= 10;
+      }
+      else {
+        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
+        StartCoroutine(keyAnimationForDifferentButtons(1));
+        IndexForLettersListening--;
+        if (IndexForLettersListening < 0)
+          IndexForLettersListening += 10;
+      }
+      for (int i = 0; i < 7; i++)
+        LEDSegments[i].gameObject.SetActive(ShowingSegments(IndexForLettersListening)[i]);
+    }
+
+    #endregion
+
+    #region Sounds
+
+    void SoundStarterPress () {
+      Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, SoundStarter.transform);
+      StartCoroutine(keyAnimationForDifferentButtonsButDifferentNow());
+      if (!Activated) {
+        ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[1];
+        Activated = true;
+        StartCoroutine(Listen());
+      }
+      else {
+        ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[0];
+        Activated = false;
+        StopCoroutine(Listen());
+      }
+    }
+
+    IEnumerator Listen () {
+      while (Activated) {
+        for (int i = 0; i < 5; i++) {
+          if (BinaryRepresentations[Alphabet.IndexOf(ShuffledCall[IndexForLettersListening])][i]) {
+            if (!Activated)
+              goto NotActivatedLol;
+            Audio.PlaySoundAtTransform("High", transform);
+          }
+          else {
+            if (!Activated)
+              goto NotActivatedLol;
+            Audio.PlaySoundAtTransform("Low", transform);
+          }
+          yield return new WaitForSecondsRealtime(.287f);
+        }
+      }
+      NotActivatedLol:
+      yield return null;
+    }
+
+    #endregion
+
+    #region Animations
+
     IEnumerator ShutOff (string Input) {
       Animating = true;
       switch (Input) {
@@ -253,59 +299,6 @@ public class DoublePitch : MonoBehaviour {
       }
       Animating = false;
       Presses = 0;
-    }
-
-    void ArrowPress (KMSelectable Arrow) {
-      if (Arrow == PitchSelector[0]) {
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
-        StartCoroutine(keyAnimationForDifferentButtons(0));
-        IndexForLettersListening++;
-        IndexForLettersListening %= 10;
-      }
-      else {
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
-        StartCoroutine(keyAnimationForDifferentButtons(1));
-        IndexForLettersListening--;
-        if (IndexForLettersListening < 0)
-          IndexForLettersListening += 10;
-      }
-      for (int i = 0; i < 7; i++)
-        LEDSegments[i].gameObject.SetActive(ShowingSegments(IndexForLettersListening)[i]);
-    }
-
-    void SoundStarterPress () {
-      Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, SoundStarter.transform);
-      StartCoroutine(keyAnimationForDifferentButtonsButDifferentNow());
-      if (!Activated) {
-        ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[1];
-        Activated = true;
-        StartCoroutine(Listen());
-      }
-      else {
-        ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[0];
-        Activated = false;
-        StopCoroutine(Listen());
-      }
-    }
-
-    IEnumerator Listen () {
-      while (Activated) {
-        for (int i = 0; i < 5; i++) {
-          if (BinaryRepresentations[Alphabet.IndexOf(ShuffledCall[IndexForLettersListening])][i]) {
-            if (!Activated)
-              goto NotActivatedLol;
-            Audio.PlaySoundAtTransform("High", transform);
-          }
-          else {
-            if (!Activated)
-              goto NotActivatedLol;
-            Audio.PlaySoundAtTransform("Low", transform);
-          }
-          yield return new WaitForSecondsRealtime(.287f);
-        }
-      }
-      NotActivatedLol:
-      yield return null;
     }
 
     private IEnumerator keyAnimation (int HiKavin)
@@ -362,6 +355,25 @@ public class DoublePitch : MonoBehaviour {
         animatingFlagThree = false;
     }
 
+    bool[] ShowingSegments (int Input) {
+      bool[] Output = new bool[7];
+      switch (Input) {    //tm tl    tr     mm     bl    br    bm
+        case 0: Output = new bool[] {true, true, true, false, true, true, true}; break;
+        case 1: Output = new bool[] {false, false, true, false, false, true, false}; break;
+        case 2: Output = new bool[] {true, false, true, true, true, false, true}; break;
+        case 3: Output = new bool[] {true, false, true, true, false, true, true}; break;
+        case 4: Output = new bool[] {false, true, true, true, false, true, false}; break;
+        case 5: Output = new bool[] {true, true, false, true, false, true, true}; break;
+        case 6: Output = new bool[] {true, true, false, true, true, true, true}; break;
+        case 7: Output = new bool[] {true, false, true, false, false, true, false}; break;
+        case 8: Output = new bool[] {true, true, true, true, true, true, true}; break;
+        case 9: Output = new bool[] {true, true, true, true, false, true, true}; break;
+      }
+      return Output;
+    }
+
+    #endregion
+
     #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"Use !{0} toggle to toggle the audio. Use !{0} raise/lower to press the buttons that adjust the pitch playing. Use !{0} ##### to submit a five digit number.";
     #pragma warning restore 414
@@ -377,6 +389,9 @@ public class DoublePitch : MonoBehaviour {
       else if (Command == "RAISE")
         PitchSelector[0].OnInteract();
       else if (Command.Length == 5 && Int32.TryParse(Command, out Result)) {
+        Keypad[10].OnInteract();
+        while (Animating)
+          yield return null;
         for (int i = 0; i < 5; i++) {
           Keypad[int.Parse(Command[i].ToString())].OnInteract();
           yield return new WaitForSeconds(.1f);
