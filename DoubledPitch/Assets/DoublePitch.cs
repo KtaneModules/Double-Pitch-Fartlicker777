@@ -43,17 +43,11 @@ public class DoublePitch : MonoBehaviour {
     string UnencryptedAnswerResponse = "";
     string Temp;
 
-    bool[][] LEDs = new bool[6][] {
-      new bool[7], new bool[7], new bool[7], new bool[7], new bool[7], new bool[7]
-    };
     bool[][] BinaryRepresentations = new bool[26][] {
       new bool[5] {false, false, false, false, true}, new bool[5] {false, false, false, true, false}, new bool[5] {false, false, false, true, true}, new bool[5] {false, false, true, false, false}, new bool[5] {false, false, true, false, true}, new bool[5] {false, false, true, true, false}, new bool[5] {false, false, true, true, true}, new bool[5] {false, true, false, false, false}, new bool[5] {false, true, false, false, true}, new bool[5] {false, true, false, true, false}, new bool[5] {false, true, false, true, true}, new bool[5] {false, true, true, false, false}, new bool[5] {false, true, true, false, true}, new bool[5] {false, true, true, true, false}, new bool[5] {false, true, true, true, true}, new bool[5] {true, false, false, false, false}, new bool[5] {true, false, false, false, true}, new bool[5] {true, false, false, true, false}, new bool[5] {true, false, false, true, true}, new bool[5] {true, false, true, false, false}, new bool[5] {true, false, true, false, true}, new bool[5] {true, false, true, true, false}, new bool[5] {true, false, true, true, true}, new bool[5] {true, true, false, false, false}, new bool[5] {true, true, false, false, true}, new bool[5] {true, true, false, true, false}
     };
-    private bool[] animatingFlag = new bool[12];
-    private bool[] animatingFlagTwo = new bool[2];
     bool Activated;
     bool Animating;
-    bool animatingFlagThree;
 
     char[] ShuffledCall = new char[10];
 
@@ -243,6 +237,7 @@ public class DoublePitch : MonoBehaviour {
           }
           yield return new WaitForSecondsRealtime(.287f);
         }
+        yield return new WaitForSecondsRealtime(1f);
       }
       NotActivatedLol:
       yield return null;
@@ -271,7 +266,6 @@ public class DoublePitch : MonoBehaviour {
         for (int i = 7; i < 42; i++)
           LEDSegments[i].GetComponent<MeshRenderer>().material = ColorLED[0];
         goto case "Clear";
-        break;
         case "Clear":
         for (int j = 7; j < LEDSegments.Length; j++) {
           if (LEDSegments[j].gameObject.activeSelf) {
@@ -303,7 +297,6 @@ public class DoublePitch : MonoBehaviour {
 
     private IEnumerator keyAnimation (int HiKavin)
     {
-        animatingFlag[HiKavin] = true;
         Keypad[HiKavin].AddInteractionPunch(0.125f);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         for (int i = 0; i < 5; i++)
@@ -316,12 +309,10 @@ public class DoublePitch : MonoBehaviour {
             Keypad[HiKavin].transform.localPosition += new Vector3(0, +0.15F, 0);
             yield return new WaitForSeconds(0.005F);
         }
-        animatingFlag[HiKavin] = false;
     }
 
     private IEnumerator keyAnimationForDifferentButtons (int HiKavin)
     {
-        animatingFlagTwo[HiKavin] = true;
         PitchSelector[HiKavin].AddInteractionPunch(0.125f);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         for (int i = 0; i < 5; i++)
@@ -334,12 +325,10 @@ public class DoublePitch : MonoBehaviour {
             PitchSelector[HiKavin].transform.localPosition += new Vector3(0, +0.15F, 0);
             yield return new WaitForSeconds(0.005F);
         }
-        animatingFlagTwo[HiKavin] = false;
     }
 
     private IEnumerator keyAnimationForDifferentButtonsButDifferentNow ()
     {
-        animatingFlagThree = true;
         SoundStarter.AddInteractionPunch(0.125f);
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         for (int i = 0; i < 5; i++)
@@ -352,7 +341,6 @@ public class DoublePitch : MonoBehaviour {
             SoundStarter.transform.localPosition += new Vector3(0, +0.0005F, 0);
             yield return new WaitForSeconds(0.005F);
         }
-        animatingFlagThree = false;
     }
 
     bool[] ShowingSegments (int Input) {
