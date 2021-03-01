@@ -158,19 +158,27 @@ public class DoublePitch : MonoBehaviour {
           if (Animating)
             return;
           if (Answer == 69420) {
-            Audio.PlaySoundAtTransform("WakaFlaca", transform);
+            Audio.PlaySoundAtTransform("WakaFlaca", this.transform);
             goto funni;
           }
           else if (Answer == 80085) {
-            Audio.PlaySoundAtTransform("tits", transform);
+            Audio.PlaySoundAtTransform("tits", this.transform);
             goto funni;
           }
           else if (Answer == 42069) {
-            Audio.PlaySoundAtTransform("loudMan", transform);
+            Audio.PlaySoundAtTransform("loudMan", this.transform);
             goto funni;
           }
           else if (Answer == 58008) {
-            Audio.PlaySoundAtTransform("fart", transform);
+            Audio.PlaySoundAtTransform("fart", this.transform);
+            goto funni;
+          }
+          else if (Answer == 505) {
+            Audio.PlaySoundAtTransform(UnityEngine.Random.Range(0, 2) == 0 ? "drip" : "AMOGUS Sound Effect", this.transform);
+            goto funni;
+          }
+          else if (Answer == 45148) {
+            Audio.PlaySoundAtTransform("Asian", this.transform);
             goto funni;
           }
           if (Answer != NumericalAnswer || Presses != 5) {

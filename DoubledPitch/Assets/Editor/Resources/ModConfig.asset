@@ -15,8 +15,9 @@ MonoBehaviour:
   title: Double Pitch
   author: me
   description: "Through shoddy electronics work, someone was able to recreate the
-    sound of an IBM 5150.\n\nManual can be found at ktane.timwi.de\n\nThanks to VFlyer
-    for letting me use his 7-Segment Display from 7, his module can be found at https://steamcommunity.com/sharedfiles/filedetails/?id=1940164898.\n\nIf
+    sound of an IBM 5150.\n\nDecrypt a message consisting of an audible form of binary.\n\nManual
+    can be found at ktane.timwi.de\n\nThanks to VFlyer for letting me use his 7-Segment
+    Display from 7, his module can be found at https://steamcommunity.com/sharedfiles/filedetails/?id=1940164898.\n\nIf
     there are any bugs, contact Fartlicker777#9169\r\n"
   version: 
   outputFolder: build
