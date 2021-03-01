@@ -27,6 +27,7 @@ public class DoublePitch : MonoBehaviour {
 
     int[] ErrorLED = {7, 8, 10, 11, 13, 17, 18, 24, 25, 31, 32, 33, 34, 38, 39};
     int[] GreatLED = {7, 8, 11, 12, 13, 17, 18, 21, 22, 24, 25, 27, 28, 29, 30, 31, 32, 33, 36, 38, 39, 41};
+    int[] easterEggs = { 69420, 42069, 58008, 80085 };
     int Answer;
     int CaesarShift;
     int IndexForLettersListening;
@@ -48,6 +49,7 @@ public class DoublePitch : MonoBehaviour {
     };
     bool Activated;
     bool Animating;
+    bool TwitchPlaysActive;
 
     char[] ShuffledCall = new char[10];
 
@@ -181,6 +183,10 @@ public class DoublePitch : MonoBehaviour {
             GetComponent<KMBombModule>().HandlePass();
             StartCoroutine(ShutOff("Solve"));
           }
+           if (TwitchPlaysActive && easterEggs.Contains(Answer)) {
+              Answer &= 0;
+              StartCoroutine(ShutOff("Clear"));
+          }
         }
       }
     }
@@ -277,7 +283,14 @@ public class DoublePitch : MonoBehaviour {
         Answer = 0;
         break;
         case "Solve":
-        for (int i = 7; i < 42; i++) {
+        if (Activated)
+        {
+            ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[0];
+            Activated = false;
+            StopCoroutine(Listen());
+            StartCoroutine(ShutOff("Solve"));
+        }
+       for (int i = 7; i < 42; i++) {
           LEDSegments[i].GetComponent<MeshRenderer>().material = ColorLED[2];
         }
         for (int x = 0; x < 10; x++) {
