@@ -20,10 +20,13 @@ public class DoublePitch : MonoBehaviour {
 
    public Material[] Color;
    public Material[] ColorLED;
+   public ShittyBeatsJukebox jukeboxMode;
+    public Transform modTF;
 
    static int moduleIdCounter = 1;
    int moduleId;
    bool ModuleSolved;
+    bool JukeboxActive;
 
    int[] ErrorLED = { 7, 8, 10, 11, 13, 17, 18, 24, 25, 31, 32, 33, 34, 38, 39 };
    int[] GreatLED = { 7, 8, 11, 12, 13, 17, 18, 21, 22, 24, 25, 27, 28, 29, 30, 31, 32, 33, 36, 38, 39, 41 };
@@ -148,6 +151,8 @@ public class DoublePitch : MonoBehaviour {
    #region Buttons
 
    void KeyPress(KMSelectable Key) {
+        if (JukeboxActive)
+            return;
       for (int i = 0; i < Keypad.Length; i++) {
          if (Key == Keypad[i] && i < 10) {
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Key.transform);
@@ -186,31 +191,39 @@ public class DoublePitch : MonoBehaviour {
          }
          else if (Key == Keypad[i] && i == 11) {
             StartCoroutine(keyAnimation(i));
-            if (Answer == 69420) {
-               Audio.PlaySoundAtTransform("WakaFlaca", this.transform);
-               goto funni;
-            }
-            else if (Answer == 80085) {
-               Audio.PlaySoundAtTransform("tits", this.transform);
-               goto funni;
-            }
-            else if (Answer == 42069) {
-               Audio.PlaySoundAtTransform("loudMan", this.transform);
-               goto funni;
-            }
-            else if (Answer == 58008) {
-               Audio.PlaySoundAtTransform("fart", this.transform);
-               goto funni;
-            }
-            else if (Answer == 505) {
-               Audio.PlaySoundAtTransform("AMOGUS Sound Effect", this.transform);
-               goto funni;
-            }
-            else if (Answer == 45148) {
-               Audio.PlaySoundAtTransform("Asian", this.transform);
-               goto funni;
-            }
-            if (Answer != NumericalAnswer || Presses != 5) {
+                if (Answer == 69420)
+                {
+                    Audio.PlaySoundAtTransform("WakaFlaca", this.transform);
+                    goto funni;
+                }
+                else if (Answer == 80085)
+                {
+                    Audio.PlaySoundAtTransform("tits", this.transform);
+                    goto funni;
+                }
+                else if (Answer == 42069)
+                {
+                    Audio.PlaySoundAtTransform("loudMan", this.transform);
+                    goto funni;
+                }
+                else if (Answer == 58008)
+                {
+                    Audio.PlaySoundAtTransform("fart", this.transform);
+                    goto funni;
+                }
+                else if (Answer == 505)
+                {
+                    Audio.PlaySoundAtTransform("AMOGUS Sound Effect", this.transform);
+                    goto funni;
+                }
+                else if (Answer == 45148)
+                {
+                    Audio.PlaySoundAtTransform("Asian", this.transform);
+                    goto funni;
+                }
+                else if (ModuleSolved)
+                    StartCoroutine(Flip());
+            else if (Answer != NumericalAnswer || Presses != 5) {
                GetComponent<KMBombModule>().HandleStrike();
                StartCoroutine(ShutOff("Strike"));
                return;
@@ -408,6 +421,21 @@ public class DoublePitch : MonoBehaviour {
       }
       return Output;
    }
+
+    private IEnumerator Flip()
+    {
+        JukeboxActive = true;
+        Debug.LogFormat("[Double Pitch #{0}] Welcome to the Shitty Beats Jukebox! Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz", moduleId);
+        jukeboxMode.Initiate();
+        float delta = 0;
+        const float duration = 1.5f;
+        while (delta < duration)
+        {
+            delta += Time.deltaTime;
+            modTF.localRotation = Quaternion.Euler(Easing.OutSine(delta, 0, 180, duration), 0, 0);
+            yield return null;  
+        }
+    }
 
    #endregion
 
