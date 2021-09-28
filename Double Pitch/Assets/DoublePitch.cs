@@ -21,12 +21,12 @@ public class DoublePitch : MonoBehaviour {
    public Material[] Color;
    public Material[] ColorLED;
    public ShittyBeatsJukebox jukeboxMode;
-    public Transform modTF;
+   public Transform modTF;
 
    static int moduleIdCounter = 1;
    int moduleId;
    bool ModuleSolved;
-    bool JukeboxActive;
+   bool JukeboxActive;
 
    int[] ErrorLED = { 7, 8, 10, 11, 13, 17, 18, 24, 25, 31, 32, 33, 34, 38, 39 };
    int[] GreatLED = { 7, 8, 11, 12, 13, 17, 18, 21, 22, 24, 25, 27, 28, 29, 30, 31, 32, 33, 36, 38, 39, 41 };
@@ -57,7 +57,7 @@ public class DoublePitch : MonoBehaviour {
 
    #region Calculations
 
-   void Awake() {
+   void Awake () {
       moduleId = moduleIdCounter++;
       foreach (KMSelectable Key in Keypad)
          Key.OnInteract += delegate () { KeyPress(Key); return false; };
@@ -66,7 +66,7 @@ public class DoublePitch : MonoBehaviour {
       SoundStarter.OnInteract += delegate () { SoundStarterPress(); return false; };
    }
 
-   void Start() {
+   void Start () {
       WordSelector = UnityEngine.Random.Range(0, Calls.Length);
       GivenCall = Calls[WordSelector];
       for (int i = 0; i < LEDSegments.Length; i++) {
@@ -150,9 +150,9 @@ public class DoublePitch : MonoBehaviour {
 
    #region Buttons
 
-   void KeyPress(KMSelectable Key) {
-        if (JukeboxActive)
-            return;
+   void KeyPress (KMSelectable Key) {
+      //if (JukeboxActive)
+      //   return;
       for (int i = 0; i < Keypad.Length; i++) {
          if (Key == Keypad[i] && i < 10) {
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Key.transform);
@@ -191,38 +191,33 @@ public class DoublePitch : MonoBehaviour {
          }
          else if (Key == Keypad[i] && i == 11) {
             StartCoroutine(keyAnimation(i));
-                if (Answer == 69420)
-                {
-                    Audio.PlaySoundAtTransform("WakaFlaca", this.transform);
-                    goto funni;
-                }
-                else if (Answer == 80085)
-                {
-                    Audio.PlaySoundAtTransform("tits", this.transform);
-                    goto funni;
-                }
-                else if (Answer == 42069)
-                {
-                    Audio.PlaySoundAtTransform("loudMan", this.transform);
-                    goto funni;
-                }
-                else if (Answer == 58008)
-                {
-                    Audio.PlaySoundAtTransform("fart", this.transform);
-                    goto funni;
-                }
-                else if (Answer == 505)
-                {
-                    Audio.PlaySoundAtTransform("AMOGUS Sound Effect", this.transform);
-                    goto funni;
-                }
-                else if (Answer == 45148)
-                {
-                    Audio.PlaySoundAtTransform("Asian", this.transform);
-                    goto funni;
-                }
-                else if (ModuleSolved)
-                    StartCoroutine(Flip());
+            if (Answer == 69420) {
+               Audio.PlaySoundAtTransform("WakaFlaca", this.transform);
+               goto funni;
+            }
+            else if (Answer == 80085) {
+               Audio.PlaySoundAtTransform("tits", this.transform);
+               goto funni;
+            }
+            else if (Answer == 42069) {
+               Audio.PlaySoundAtTransform("loudMan", this.transform);
+               goto funni;
+            }
+            else if (Answer == 58008) {
+               Audio.PlaySoundAtTransform("fart", this.transform);
+               goto funni;
+            }
+            else if (Answer == 505) {
+               Audio.PlaySoundAtTransform("AMOGUS Sound Effect", this.transform);
+               goto funni;
+            }
+            else if (Answer == 45148) {
+               Audio.PlaySoundAtTransform("Asian", this.transform);
+               goto funni;
+            }
+            /*else if (ModuleSolved) {
+               StartCoroutine(Flip());
+            }*/
             else if (Answer != NumericalAnswer || Presses != 5) {
                GetComponent<KMBombModule>().HandleStrike();
                StartCoroutine(ShutOff("Strike"));
@@ -242,7 +237,7 @@ public class DoublePitch : MonoBehaviour {
       }
    }
 
-   void ArrowPress(KMSelectable Arrow) {
+   void ArrowPress (KMSelectable Arrow) {
       if (Arrow == PitchSelector[0]) {
          Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, Arrow.transform);
          StartCoroutine(keyAnimationForDifferentButtons(0));
@@ -261,26 +256,32 @@ public class DoublePitch : MonoBehaviour {
       }
    }
 
-   #endregion
-
-   #region Sounds
-
-   void SoundStarterPress() {
+   void SoundStarterPress () {
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, SoundStarter.transform);
       StartCoroutine(keyAnimationForDifferentButtonsButDifferentNow());
       if (!Activated) {
          ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[1];
          Activated = true;
+         if (ModuleSolved) {
+            return;
+         }
          StartCoroutine(Listen());
       }
       else {
          ConenctsTheSoundButtonAndBox.GetComponent<MeshRenderer>().material = Color[0];
          Activated = false;
+         if (ModuleSolved) {
+            return;
+         }
          StopCoroutine(Listen());
       }
    }
 
-   IEnumerator Listen() {
+   #endregion
+
+   #region Sounds
+
+   IEnumerator Listen () {
       while (Activated) {
          for (int i = 0; i < 5; i++) {
             if (BinaryRepresentations[Alphabet.IndexOf(ShuffledCall[IndexForLettersListening])][i]) {
@@ -305,7 +306,7 @@ public class DoublePitch : MonoBehaviour {
 
    #region Animations
 
-   IEnumerator ShutOff(string Input) {
+   IEnumerator ShutOff (string Input) {
       Animating = true;
       switch (Input) {
          case "Strike":
@@ -332,7 +333,7 @@ public class DoublePitch : MonoBehaviour {
             for (int j = 7; j < LEDSegments.Length; j++) {
                if (LEDSegments[j].gameObject.activeSelf) {
                   LEDSegments[j].gameObject.SetActive(false);
-                  yield return new WaitForSecondsRealtime(.05f);
+                  yield return new WaitForSecondsRealtime(.01f);
                }
             }
             Temp = "";
@@ -366,7 +367,7 @@ public class DoublePitch : MonoBehaviour {
       Presses = 0;
    }
 
-   private IEnumerator keyAnimation(int HiKavin) {
+   private IEnumerator keyAnimation (int HiKavin) {
       Keypad[HiKavin].AddInteractionPunch(0.125f);
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
       for (int i = 0; i < 5; i++) {
@@ -379,7 +380,7 @@ public class DoublePitch : MonoBehaviour {
       }
    }
 
-   private IEnumerator keyAnimationForDifferentButtons(int HiKavin) {
+   private IEnumerator keyAnimationForDifferentButtons (int HiKavin) {
       PitchSelector[HiKavin].AddInteractionPunch(0.125f);
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
       for (int i = 0; i < 5; i++) {
@@ -392,7 +393,7 @@ public class DoublePitch : MonoBehaviour {
       }
    }
 
-   private IEnumerator keyAnimationForDifferentButtonsButDifferentNow() {
+   private IEnumerator keyAnimationForDifferentButtonsButDifferentNow () {
       SoundStarter.AddInteractionPunch(0.125f);
       Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
       for (int i = 0; i < 5; i++) {
@@ -405,7 +406,7 @@ public class DoublePitch : MonoBehaviour {
       }
    }
 
-   bool[] ShowingSegments(int Input) {
+   bool[] ShowingSegments (int Input) {
       bool[] Output = new bool[7];
       switch (Input) {    //tm tl    tr     mm     bl    br    bm
          case 0: Output = new bool[] { true, true, true, false, true, true, true }; break;
@@ -422,20 +423,18 @@ public class DoublePitch : MonoBehaviour {
       return Output;
    }
 
-    private IEnumerator Flip()
-    {
-        JukeboxActive = true;
-        Debug.LogFormat("[Double Pitch #{0}] Welcome to the Shitty Beats Jukebox! Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz", moduleId);
-        jukeboxMode.Initiate();
-        float delta = 0;
-        const float duration = 1.5f;
-        while (delta < duration)
-        {
-            delta += Time.deltaTime;
-            modTF.localRotation = Quaternion.Euler(Easing.OutSine(delta, 0, 180, duration), 0, 0);
-            yield return null;  
-        }
-    }
+   /*private IEnumerator Flip () {
+      JukeboxActive = true;
+      Debug.LogFormat("[Double Pitch #{0}] Welcome to the Shitty Beats Jukebox! Listen to Shitty Beats today! https://www.youtube.com/playlist?list=PL6giE1a_sXZxLMIpgOvrprJqx26XipcEz", moduleId);
+      jukeboxMode.Initiate();
+      float delta = 0;
+      const float duration = 1.5f;
+      while (delta < duration) {
+         delta += Time.deltaTime;
+         modTF.localRotation = Quaternion.Euler(Easing.OutSine(delta, 0, 180, duration), 0, 0);
+         yield return null;
+      }
+   }*/
 
    #endregion
 
@@ -445,7 +444,7 @@ public class DoublePitch : MonoBehaviour {
    private readonly string TwitchHelpMessage = @"Use !{0} toggle to toggle the audio. Use !{0} raise/lower to press the buttons that adjust the pitch playing. Use !{0} ##### to submit a five digit number.";
 #pragma warning restore 414
 
-   IEnumerator ProcessTwitchCommand(string Command) {
+   IEnumerator ProcessTwitchCommand (string Command) {
       int Result;
       Command = Command.Trim().ToUpper();
       yield return null;
@@ -469,7 +468,7 @@ public class DoublePitch : MonoBehaviour {
          yield return "sendtochaterror I don't understand!";
    }
 
-   IEnumerator TwitchHandleForcedSolve() {
+   IEnumerator TwitchHandleForcedSolve () {
       Keypad[10].OnInteract();
       while (Animating)
          yield return null;
