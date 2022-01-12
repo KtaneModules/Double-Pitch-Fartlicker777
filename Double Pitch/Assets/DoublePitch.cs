@@ -128,7 +128,12 @@ public class DoublePitch : MonoBehaviour {
       }
       for (int i = 0; i < 10; i++) {
          if (i == 8 || i == 9) {
-            ShuffledCall[i] = Alphabet[UnityEngine.Random.Range(0, 26)];
+            int choice = UnityEngine.Random.Range(0, 26);
+            if (GivenCall == "IMPOSTER")
+               while (Alphabet[choice] == 'U') choice = UnityEngine.Random.Range(0, 26);
+            else if (GivenCall == "TIMERSUP")
+               while (Alphabet[choice] == 'O') choice = UnityEngine.Random.Range(0, 26);
+            ShuffledCall[i] = Alphabet[choice];
          }
          else {
             ShuffledCall[i] = GivenCall[i];
