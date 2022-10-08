@@ -171,7 +171,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1058090182085796
 GameObject:
   m_ObjectHideFlags: 0
@@ -14320,31 +14320,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Parent: {fileID: 114139553842080666}
   Children:
+  - {fileID: 0}
+  - {fileID: 114883516753426618}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 114222932255623752}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 114373538003937114}
+  - {fileID: 0}
   - {fileID: 114304938480267692}
   - {fileID: 114971004556898646}
   - {fileID: 114880413190742864}
   - {fileID: 114916949110849572}
   - {fileID: 114674635414128770}
   - {fileID: 114196236077585272}
-  - {fileID: 114233155307394724}
   - {fileID: 114301981496198968}
   - {fileID: 114358563243578542}
+  - {fileID: 114233155307394724}
   - {fileID: 114112847328744660}
   - {fileID: 114355806619897272}
   - {fileID: 114862908463960130}
-  - {fileID: 114222932255623752}
-  - {fileID: 114373538003937114}
-  - {fileID: 114844828863631570}
-  - {fileID: 114330839024781208}
-  - {fileID: 114946995867949498}
-  - {fileID: 114080535361442608}
-  - {fileID: 114776191414708398}
-  - {fileID: 114883516753426618}
-  - {fileID: 114728124232851856}
-  - {fileID: 114908307000626878}
-  - {fileID: 114504494373382276}
   IsPassThrough: 0
-  ChildRowLength: 0
+  ChildRowLength: 3
   Highlight: {fileID: 114570430299588062}
   SelectableColliders: []
   DefaultSelectableIndex: 0

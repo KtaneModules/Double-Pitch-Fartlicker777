@@ -16,8 +16,7 @@ MonoBehaviour:
   author: me
   description: "Through shoddy electronics work, someone was able to recreate the
     sound of an IBM 5150.\n\nDecrypt a message consisting of an audible form of binary.\n\nManual
-    can be found at ktane.timwi.de or in the manuals folder of your game.\n\nHuge
-    thanks to Danny7007 for implementing the Shitty Beats playlist into this mod.\n\nThanks
+    can be found at ktane.timwi.de or in the manuals folder of your game.\n\nThanks
     to VFlyer for letting me use his 7-Segment Display from 7, his module can be found
     at https://steamcommunity.com/sharedfiles/filedetails/?id=1940164898.\n\nIf there
     are any bugs, contact Fartlicker777#9169\r on Discord."
